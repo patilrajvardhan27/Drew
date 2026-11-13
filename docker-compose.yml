@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      REDRAFT_ADOBE_MODE: ${REDRAFT_ADOBE_MODE:-fixture}
+    volumes:
+      - redraft-data:/data
+
+volumes:
+  redraft-data:
