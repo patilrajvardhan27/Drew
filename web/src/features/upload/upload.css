@@ -1,0 +1,84 @@
+.upload {
+  display: grid;
+  gap: 32px;
+  padding: 56px 0 24px;
+}
+
+.hero h1 {
+  max-width: 820px;
+  font-size: 80px;
+}
+
+.hero-lede {
+  max-width: 620px;
+  margin: 20px 0 0;
+  font-size: 18px;
+  color: var(--color-graphite);
+}
+
+.dropzone {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  padding: 40px;
+  border: 1px dashed var(--color-carbon);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-white);
+}
+
+.dropzone.is-hovering {
+  border-style: solid;
+  box-shadow: var(--glow-violet);
+}
+
+.dropzone p {
+  margin: 0;
+}
+
+.dropzone-title {
+  font: 300 32px/1.1 var(--font-display);
+}
+
+.dropzone-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  padding-top: 16px;
+  border-top: var(--hairline);
+}
+
+.steps h2 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.steps p {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .hero h1 {
+    font-size: 48px;
+  }
+
+  .dropzone {
+    padding: 24px;
+  }
+
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

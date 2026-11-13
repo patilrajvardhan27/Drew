@@ -1,0 +1,21 @@
+.add-page {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 360px);
+  padding: 20px;
+  border: var(--hairline);
+  border-radius: var(--radius-card);
+  background: var(--color-paper-white);
+  box-shadow: var(--shadow-raised);
+}
+
+.add-page-note {
+  margin: 0;
+  font-size: 13px;
+}
+
+.add-page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
