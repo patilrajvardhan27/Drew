@@ -1,0 +1,56 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 651 >>
+stream
+BT /F1 26 Tf 72 700 Td (Northwind Field Report) Tj ET
+BT /F1 16 Tf 72 660 Td (Summary) Tj ET
+BT /F1 11 Tf 72 636 Td (Field teams visited 42 sites this quarter and closed 18 open requests.) Tj ET
+BT /F1 11 Tf 72 620 Td (Response times improved in every region except the coast.) Tj ET
+BT /F1 16 Tf 72 584 Td (Highlights) Tj ET
+BT /F1 11 Tf 84 560 Td (- New intake form cut paperwork by a third.) Tj ET
+BT /F1 11 Tf 84 544 Td (- Two regional depots now share one parts inventory.) Tj ET
+BT /F1 11 Tf 84 528 Td (- Safety audits passed with no critical findings.) Tj ET
+BT /F1 11 Tf 72 492 Td (The full regional breakdown follows on the next page.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 451 >>
+stream
+BT /F1 16 Tf 72 700 Td (Regional figures) Tj ET
+BT /F1 11 Tf 72 670 Td (Region        Q1 visits    Q2 visits    Notes) Tj ET
+BT /F1 11 Tf 72 652 Td (North         12           15           Stable) Tj ET
+BT /F1 11 Tf 72 634 Td (Coast         9            n/a          Storm closures) Tj ET
+BT /F1 11 Tf 72 616 Td (Valley        14           17           New depot) Tj ET
+BT /F1 11 Tf 72 580 Td (Figures are counted at the close of each quarter.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000000948 00000 n 
+0000001074 00000 n 
+0000001575 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+1645
+%%EOF

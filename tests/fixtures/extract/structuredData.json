@@ -1,0 +1,317 @@
+{
+  "version": {
+    "json_export": "200",
+    "page_segmentation": "1.0",
+    "schema": "1.1.0",
+    "structure": "1.1036.0",
+    "table_structure": "1.1092.0"
+  },
+  "extended_metadata": {
+    "ID_instance": "fixture",
+    "ID_permanent": "fixture",
+    "page_count": 2,
+    "pdf_version": "1.4",
+    "is_encrypted": false,
+    "has_acroform": false,
+    "is_digitally_signed": false,
+    "pdfua_compliance_level": "",
+    "pdfa_compliance_level": "",
+    "is_certified": false,
+    "is_XFA": false,
+    "language": "en"
+  },
+  "elements": [
+    {
+      "Path": "//Document/Title",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 26.0,
+      "Text": "Northwind Field Report "
+    },
+    {
+      "Path": "//Document/H2",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 16.0,
+      "Text": "Summary "
+    },
+    {
+      "Path": "//Document/P/Sub",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "Field teams visited 42 sites this quarter and closed 18 open requests. "
+    },
+    {
+      "Path": "//Document/P/Sub[2]",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "Response times improved in every region except the coast. "
+    },
+    {
+      "Path": "//Document/H2[2]",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 16.0,
+      "Text": "Highlights "
+    },
+    {
+      "Path": "//Document/L/LI/Lbl",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "- "
+    },
+    {
+      "Path": "//Document/L/LI/LBody",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "New intake form cut paperwork by a third. "
+    },
+    {
+      "Path": "//Document/L/LI[2]/Lbl",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "- "
+    },
+    {
+      "Path": "//Document/L/LI[2]/LBody",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "Two regional depots now share one parts inventory. "
+    },
+    {
+      "Path": "//Document/L/LI[3]/Lbl",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "- "
+    },
+    {
+      "Path": "//Document/L/LI[3]/LBody",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "Safety audits passed with no critical findings. "
+    },
+    {
+      "Path": "//Document/P[2]",
+      "Page": 0,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "The full regional breakdown follows on the next page. "
+    },
+    {
+      "Path": "//Document/H2[3]",
+      "Page": 1,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 16.0,
+      "Text": "Regional figures "
+    },
+    {
+      "Path": "//Document/Table",
+      "Page": 1,
+      "Bounds": [
+        72.0,
+        610.0,
+        540.0,
+        680.0
+      ],
+      "attributes": {
+        "NumCol": 4,
+        "NumRow": 4
+      },
+      "filePaths": [
+        "tables/fileoutpart0.csv",
+        "tables/fileoutpart1.png"
+      ]
+    },
+    {
+      "Path": "//Document/Table/TR/TH/P",
+      "Page": 1,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "Region "
+    },
+    {
+      "Path": "//Document/Table/TR[2]/TD/P",
+      "Page": 1,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "North "
+    },
+    {
+      "Path": "//Document/P[3]",
+      "Page": 1,
+      "Bounds": [
+        72.0,
+        600.0,
+        540.0,
+        620.0
+      ],
+      "Font": {
+        "name": "Helvetica",
+        "weight": 400
+      },
+      "TextSize": 11.0,
+      "Text": "Figures are counted at the close of each quarter. "
+    }
+  ],
+  "pages": [
+    {
+      "page_number": 0,
+      "width": 612,
+      "height": 792,
+      "rotation": 0,
+      "is_scanned": false,
+      "boxes": {}
+    },
+    {
+      "page_number": 1,
+      "width": 612,
+      "height": 792,
+      "rotation": 0,
+      "is_scanned": false,
+      "boxes": {}
+    }
+  ]
+}
