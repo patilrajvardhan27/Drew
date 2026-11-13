@@ -115,6 +115,7 @@ function SignInForm() {
       <Button variant="quiet" onClick={() => setMode(registering ? "login" : "register")}>
         {registering ? "I already have an account" : "Create an account instead"}
       </Button>
+      {!registering && <a {...linkTo("/forgot")}>Forgot your password?</a>}
     </form>
   );
 }

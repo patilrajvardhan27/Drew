@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AccountView } from "./features/account/AccountView";
+import { ForgotPasswordView, ResetPasswordView } from "./features/account/ResetViews";
 import { EditorView } from "./features/editor/EditorView";
 import { CopyrightPage, PrivacyPage, TermsPage } from "./features/pages/SitePages";
 import { UploadView } from "./features/upload/UploadView";
@@ -11,6 +12,8 @@ const STATIC_PAGES: Record<string, () => ReactNode> = {
   "/privacy": PrivacyPage,
   "/copyright": CopyrightPage,
   "/account": AccountView,
+  "/forgot": ForgotPasswordView,
+  "/reset": ResetPasswordView,
 };
 
 function route(path: string): ReactNode {
