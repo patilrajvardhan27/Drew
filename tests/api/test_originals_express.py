@@ -55,16 +55,16 @@ def test_express_link_expires(settings):
     assert error.value.status == 410
 
 
-def test_express_endpoint_allows_addon_origins(client, document):
+def test_express_route_answers_any_origin_and_exposes_the_title(client, document):
     link = urlparse(client.post(f"/api/documents/{document['id']}/express-link").json()["url"])
-    origin = "https://abc123.wxp.adobe-addons.com"
 
-    response = client.get(f"{link.path}?{link.query}", headers={"Origin": origin})
+    response = client.get(f"{link.path}?{link.query}", headers={"Origin": "https://anything.example"})
 
-    assert response.headers["access-control-allow-origin"] == origin
+    assert response.headers["access-control-allow-origin"] == "*"
+    assert response.headers["access-control-expose-headers"] == "Content-Disposition"
 
 
-def test_addon_preflight_may_reach_a_local_server(client, document):
+def test_express_preflight_may_reach_a_local_server(client, document):
     response = client.options(
         f"/api/express/{document['id']}",
         headers={
@@ -74,8 +74,15 @@ def test_addon_preflight_may_reach_a_local_server(client, document):
         },
     )
 
-    assert response.headers["access-control-allow-origin"] == "https://localhost:5241"
+    assert response.status_code == 204
+    assert response.headers["access-control-allow-origin"] == "*"
     assert response.headers["access-control-allow-private-network"] == "true"
+
+
+def test_other_routes_keep_the_strict_cors_policy(client, document):
+    response = client.get(f"/api/documents/{document['id']}", headers={"Origin": "https://anything.example"})
+
+    assert "access-control-allow-origin" not in response.headers
 
 
 def test_old_databases_gain_new_columns(tmp_path):

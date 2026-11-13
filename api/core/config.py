@@ -42,9 +42,17 @@ class Settings(BaseSettings):
     secure_cookies: bool = False
     session_days: int = 30
 
+    # Where reset emails link to; defaults to the address the request came in on.
+    public_url: str = ""
+    # "log" writes emails to the server log for local work; use "smtp" anywhere real.
+    mail_backend: Literal["log", "smtp"] = "log"
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "Redraft <no-reply@localhost>"
+
     cors_origins: list[str] = ["http://localhost:5173"]
-    # Adobe Express serves add-ons from these origins; the add-on fetches signed export links.
-    addon_origin_regex: str = r"^https://(localhost:5241|([a-z0-9-]+\.)*wxp\.adobe-addons\.com)$"
     web_dist: Path = ROOT / "web/dist"
 
     @property

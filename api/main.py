@@ -2,10 +2,11 @@ import asyncio
 import contextlib
 from collections.abc import AsyncIterator
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
+from api.auth.reset import router as reset_router
 from api.auth.routes import router as auth_router
 from api.blocks.routes import router as blocks_router
 from api.core.cleanup import purge_forever
@@ -13,6 +14,7 @@ from api.core.config import get_settings
 from api.core.db import init_db
 from api.core.errors import install_handlers
 from api.documents.routes import router as documents_router
+from api.export.cors import express_cors
 from api.export.routes import router as export_router
 from api.pages.routes import router as pages_router
 
@@ -31,21 +33,15 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_origin_regex=settings.addon_origin_regex,
         allow_methods=["*"],
         allow_headers=["*"],
     )
     install_handlers(app)
 
-    @app.middleware("http")
-    async def allow_private_network(request: Request, call_next) -> Response:
-        # Chrome asks before a public page (the Express add-on) calls a server on localhost.
-        response = await call_next(request)
-        if request.headers.get("access-control-request-private-network") == "true":
-            response.headers["Access-Control-Allow-Private-Network"] = "true"
-        return response
+    # Added last so it wraps the general CORS policy for the one route add-ons call.
+    app.middleware("http")(express_cors)
 
-    for router in (auth_router, documents_router, blocks_router, pages_router, export_router):
+    for router in (auth_router, reset_router, documents_router, blocks_router, pages_router, export_router):
         app.include_router(router, prefix="/api")
 
     @app.get("/api/health", include_in_schema=False)
