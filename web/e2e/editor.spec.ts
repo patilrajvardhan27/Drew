@@ -1,20 +1,8 @@
-import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
-
-async function expectNoAxeViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).exclude("iframe").analyze();
-  expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
-}
-
-async function openSample(page: Page) {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Try the sample report" }).click();
-  await expect(page).toHaveURL(/\/d\/[a-f0-9]+$/);
-  await expect(page.getByRole("region", { name: "Page 1" })).toBeVisible();
-}
+import { expect, test } from "@playwright/test";
+import { expectNoAxeViolations, openSample } from "./helpers";
 
 test("landing and site pages pass axe", async ({ page }) => {
-  for (const path of ["/", "/terms", "/privacy", "/copyright"]) {
+  for (const path of ["/", "/terms", "/privacy", "/copyright", "/account"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expectNoAxeViolations(page);
@@ -55,13 +43,15 @@ test("upload, edit, reorder and add a terms page", async ({ page }) => {
   await expect(page.getByRole("region", { name: "Page 3 · Terms of Service" })).toBeVisible();
 });
 
-test("delete and undo restore a block", async ({ page }) => {
+test("delete and undo restore a block, even after a reload", async ({ page }) => {
   await openSample(page);
   const second = page.getByRole("region", { name: "Page 2" });
   await second.getByRole("article", { name: "Paragraph" }).getByRole("button", { name: "Delete" }).click();
   await expect(second.getByText("Figures are counted")).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Undo delete" }).click();
+  await page.reload();
+  await expect(second.getByText("Figures are counted")).toHaveCount(0);
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
   await expect(second.getByText("Figures are counted")).toBeVisible();
 });
 
