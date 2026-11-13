@@ -16,6 +16,7 @@ git diff --exit-code -- contracts web/src/shared/api/schema.d.ts || {
   exit 1
 }
 
+node --test express-addon/test/*.test.js
 npm --prefix web run typecheck
 npm --prefix web test
 npm --prefix web run build

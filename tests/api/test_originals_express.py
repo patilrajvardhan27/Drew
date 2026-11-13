@@ -64,6 +64,20 @@ def test_express_endpoint_allows_addon_origins(client, document):
     assert response.headers["access-control-allow-origin"] == origin
 
 
+def test_addon_preflight_may_reach_a_local_server(client, document):
+    response = client.options(
+        f"/api/express/{document['id']}",
+        headers={
+            "Origin": "https://localhost:5241",
+            "Access-Control-Request-Method": "GET",
+            "Access-Control-Request-Private-Network": "true",
+        },
+    )
+
+    assert response.headers["access-control-allow-origin"] == "https://localhost:5241"
+    assert response.headers["access-control-allow-private-network"] == "true"
+
+
 def test_old_databases_gain_new_columns(tmp_path):
     from api.core import models  # noqa: F401
     from api.core.db import Base

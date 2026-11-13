@@ -29,3 +29,5 @@ GEMINI.md
 .codex/
 .junie/
 .github/copilot-instructions.md
+express-addon/node_modules/
+express-addon/dist/

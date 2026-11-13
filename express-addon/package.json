@@ -1,0 +1,16 @@
+{
+  "name": "redraft-express-addon",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Adobe Express add-on that imports a Redraft export as editable pages.",
+  "scripts": {
+    "start": "ccweb-add-on-scripts start",
+    "build": "ccweb-add-on-scripts build",
+    "package": "ccweb-add-on-scripts package",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "@adobe/ccweb-add-on-scripts": "3.11.0"
+  }
+}

@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 from collections.abc import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -36,6 +36,15 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     install_handlers(app)
+
+    @app.middleware("http")
+    async def allow_private_network(request: Request, call_next) -> Response:
+        # Chrome asks before a public page (the Express add-on) calls a server on localhost.
+        response = await call_next(request)
+        if request.headers.get("access-control-request-private-network") == "true":
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+        return response
+
     for router in (auth_router, documents_router, blocks_router, pages_router, export_router):
         app.include_router(router, prefix="/api")
 
