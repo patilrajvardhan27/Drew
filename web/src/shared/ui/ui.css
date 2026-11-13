@@ -1,0 +1,112 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: var(--radius-button);
+  border: var(--hairline);
+  font: 600 15px/1 var(--font-ui);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.button-primary {
+  background: var(--color-press-black);
+  border-color: var(--color-press-black);
+  color: var(--color-paper-white);
+  box-shadow: var(--shadow-raised);
+}
+
+.button-outline {
+  background: var(--color-paper-white);
+  border-color: var(--color-ink-violet);
+  color: var(--color-ink-violet);
+}
+
+.button-quiet {
+  min-height: 32px;
+  padding: 0 10px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-graphite);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border: var(--hairline);
+  border-radius: var(--radius-tag);
+  font: 500 11px/1.4 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.skeleton {
+  display: block;
+  border-radius: var(--radius-button);
+  background: var(--color-newsprint);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.sheet {
+  background: var(--color-paper-white);
+  border: var(--hairline);
+  border-radius: var(--radius-sheet);
+  padding: 20px;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sheet-label {
+  color: var(--color-graphite);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: var(--hairline);
+  border-radius: var(--radius-button);
+  background: var(--color-newsprint);
+  font: 400 15px/1.5 var(--font-ui);
+  color: inherit;
+}
+
+.input:focus-visible {
+  background: var(--color-paper-white);
+}

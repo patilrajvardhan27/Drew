@@ -1,0 +1,24 @@
+:root {
+  --color-press-black: #0a0a0a;
+  --color-paper-white: #ffffff;
+  --color-newsprint: #f3f3f3;
+  --color-graphite: #666666;
+  --color-ink-violet: #19154e;
+  --color-electric-violet: #1100ff;
+  --color-carbon: #000000;
+  --color-alert: #8a1c1c;
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-ui: Inter, "Helvetica Neue", Arial, sans-serif;
+
+  --radius-button: 8px;
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+  --radius-tag: 40px;
+
+  --shadow-raised: rgba(0, 0, 0, 0.1) 0 1px 1px, rgba(0, 0, 0, 0.05) 0 2px 4px;
+  --glow-violet: rgba(17, 0, 255, 0.15) 0 0 40px;
+  --focus-ring: 0 0 0 2px var(--color-paper-white), 0 0 0 4px var(--color-electric-violet);
+
+  --hairline: 1px solid var(--color-carbon);
+}
