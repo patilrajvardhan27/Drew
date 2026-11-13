@@ -78,7 +78,17 @@ docker compose up --build
 
 ## Accounts
 
-Anyone can use Redraft without an account; those documents are deleted 24 hours after upload and are reachable by anyone holding the link. Signed-in uploads, and documents claimed with **Keep it in my account**, stay until deleted and are visible only to their owner. Passwords are hashed with scrypt, sessions are HttpOnly cookies, and repeated failed sign-ins are throttled. Set `REDRAFT_SECURE_COOKIES=true` when serving over HTTPS.
+Anyone can use Redraft without an account; those documents are deleted 24 hours after upload and are reachable by anyone holding the link. Signed-in uploads, and documents claimed with **Keep it in my account**, stay until deleted and are visible only to their owner.
+
+- Passwords are hashed with scrypt and sessions are HttpOnly cookies. Set `REDRAFT_SECURE_COOKIES=true` when serving over HTTPS.
+- Five failed sign-ins lock an email for 15 minutes. Attempts are stored in the database, so the lock holds across restarts and several server processes.
+- **Forgot your password?** emails a one-hour, single-use link. Choosing a new password signs out every other device. The answer is the same whether or not the email has an account.
+
+Email is sent according to `REDRAFT_MAIL_BACKEND`: `log` prints it in the server output, `file` writes it to `data/files/mail/`, and `smtp` sends it through the server in `REDRAFT_SMTP_*`. Use `smtp` anywhere real, and set `REDRAFT_PUBLIC_URL` so links point at the public address.
+
+## Editing from two tabs
+
+Every document carries a revision number that each change moves forward. The editor sends the revision it last saw, and the server refuses a change from a tab that has fallen behind. That tab then loads the newer version and says why, so one tab can never silently overwrite or undo work done in another.
 
 ## Adobe Express add-on
 

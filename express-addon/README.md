@@ -25,7 +25,7 @@ The panel accepts only Redraft export links, so it never fetches arbitrary URLs.
 3. In Express, open a document, choose **Add-ons**, then **Your add-ons**, enable **Add-on testing**, and connect to `https://localhost:5241`.
 4. Start Redraft as usual. If Redraft runs on another machine or behind HTTPS, links must use `https`.
 
-The API already allows the add-on's origins (`https://localhost:5241` and Adobe's add-on hosts). If Adobe serves your add-on from another origin, set `REDRAFT_ADDON_ORIGIN_REGEX` in Redraft's `.env`. Set `REDRAFT_SECRET_KEY` so links keep working after a restart.
+The export route accepts calls from any origin, because the link's signature is its only credential and it never reads cookies; nothing needs configuring for Adobe's add-on hosts. It also exposes the download name, which becomes the imported document's title. Set `REDRAFT_SECRET_KEY` so links keep working after a restart.
 
 ## Tests
 

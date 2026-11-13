@@ -11,7 +11,7 @@
 - **Design.** Follow `docs/design.md`. Skeleton loaders on every async view, no icon libraries, no hover animations.
 - **Legal templates** always carry "Template text. Not legal advice."
 - **Access.** Load documents, pages and blocks through `api/auth/access.py` so ownership is checked in one place.
-- **Undo.** Any route that changes a document calls `history.record` first.
+- **Changing a document.** Routes take the `Edit` context from `api/history/context.py` and call `edit.record(doc)` before changing anything. That one call checks access and the tab's revision, saves undo history and reports the new revision.
 
 ## Refreshing the Extract fixture
 
