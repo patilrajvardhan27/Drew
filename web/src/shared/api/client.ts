@@ -29,9 +29,23 @@ function detail(body: unknown, fallback: string): string {
   return fallback;
 }
 
+const REVISION = "X-Document-Revision";
+// The revision of the open document as this tab last saw it. Sent with every change so the server
+// can refuse a write from a stale tab instead of overwriting work done elsewhere.
+let revision: number | null = null;
+
+function track(doc: DocumentData): DocumentData {
+  revision = doc.revision;
+  return doc;
+}
+
 async function request(path: string, init: RequestInit = {}): Promise<Response> {
-  const headers = init.body instanceof FormData ? init.headers : { "Content-Type": "application/json", ...init.headers };
+  const headers = new Headers(init.headers);
+  if (!(init.body instanceof FormData)) headers.set("Content-Type", "application/json");
+  if ((init.method ?? "GET") !== "GET" && revision !== null) headers.set(REVISION, String(revision));
   const response = await fetch(`/api${path}`, { ...init, headers });
+  const next = response.headers.get(REVISION);
+  if (next !== null) revision = Number(next);
   if (!response.ok) {
     const body = await response.json().catch(() => null);
     throw new ApiError(response.status, detail(body, `Request failed (${response.status})`));
@@ -50,7 +64,7 @@ export const api = {
     form.append("file", file);
     return request("/documents", { method: "POST", body: form }).then((r) => r.json());
   },
-  document: (id: string) => json<DocumentData>(`/documents/${id}`),
+  document: (id: string) => json<DocumentData>(`/documents/${id}`).then(track),
   usage: () => json<Usage>("/usage"),
   createBlock: (pageId: string, body: BlockCreate) => json<Block>(`/pages/${pageId}/blocks`, "POST", body),
   patchBlock: (id: string, body: BlockPatch) => json<Block>(`/blocks/${id}`, "PATCH", body),
@@ -71,6 +85,9 @@ export const api = {
   me: () => json<UserData>("/auth/me"),
   register: (email: string, password: string) => json<UserData>("/auth/register", "POST", { email, password }),
   login: (email: string, password: string) => json<UserData>("/auth/login", "POST", { email, password }),
+  requestReset: (email: string) => json<{ detail: string }>("/auth/password-reset", "POST", { email }),
+  confirmReset: (token: string, password: string) =>
+    json<UserData>("/auth/password-reset/confirm", "POST", { token, password }),
   logout: () => request("/auth/logout", { method: "POST" }).then(() => undefined),
   exportPdf: (documentId: string) => request(`/documents/${documentId}/export`, { method: "POST" }).then((r) => r.blob()),
 };

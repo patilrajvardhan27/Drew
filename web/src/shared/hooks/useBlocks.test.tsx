@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { api, type Block, type DocumentData } from "../api/client";
+import { ApiError, api, type Block, type DocumentData } from "../api/client";
 import { dropTarget, moveBlock } from "./blockOps";
 import { useBlocks } from "./useBlocks";
 
@@ -17,6 +17,7 @@ const doc: DocumentData = {
   transactions_used: 1,
   owned: false,
   can_undo: false,
+  revision: 0,
   pages: [
     { id: "p1", kind: "extracted", position: 0, source_index: 0, blocks: [block("a", "p1", 0), block("b", "p1", 1), block("c", "p1", 2)] },
     { id: "p2", kind: "extracted", position: 1, source_index: 1, blocks: [block("d", "p2", 0)] },
@@ -63,6 +64,19 @@ describe("useBlocks", () => {
 
     expect(ids(result.current.state, 0)).toEqual(["a", "b", "c"]);
     expect(result.current.blocks.error).toBe("Network down");
+  });
+
+  it("loads the newer version when another tab changed the document", async () => {
+    const newer = { ...doc, revision: 4, pages: [{ ...doc.pages[0], blocks: [block("x", "p1", 0)] }, doc.pages[1]] };
+    vi.spyOn(api, "deleteBlock").mockRejectedValue(new ApiError(409, "This document changed in another tab."));
+    vi.spyOn(api, "document").mockResolvedValue(newer);
+    const { result } = setup();
+
+    await act(() => result.current.blocks.remove("b"));
+
+    expect(api.document).toHaveBeenCalledWith("d");
+    expect(ids(result.current.state, 0)).toEqual(["x"]);
+    expect(result.current.blocks.error).toBe("This document changed in another tab.");
   });
 
   it("marks a delete as undoable, then undoes through the server", async () => {

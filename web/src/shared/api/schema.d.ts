@@ -72,6 +72,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/password-reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Reset
+         * @description Answers the same way whether or not the account exists, so emails cannot be probed.
+         */
+        post: operations["request_reset_api_auth_password_reset_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/password-reset/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Reset */
+        post: operations["confirm_reset_api_auth_password_reset_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/documents": {
         parameters: {
             query?: never;
@@ -484,6 +521,8 @@ export interface components {
             owned: boolean;
             /** Can Undo */
             can_undo: boolean;
+            /** Revision */
+            revision: number;
             /** Pages */
             pages: components["schemas"]["PageOut"][];
         };
@@ -533,6 +572,11 @@ export interface components {
             /** Jurisdiction */
             jurisdiction: string;
         };
+        /** Notice */
+        Notice: {
+            /** Detail */
+            detail: string;
+        };
         /** PageCreate */
         PageCreate: {
             /**
@@ -559,6 +603,21 @@ export interface components {
             source_index: number | null;
             /** Blocks */
             blocks: components["schemas"]["BlockOut"][];
+        };
+        /** ResetConfirm */
+        ResetConfirm: {
+            /** Token */
+            token: string;
+            /** Password */
+            password: string;
+        };
+        /** ResetRequest */
+        ResetRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
         };
         /** UsageOut */
         UsageOut: {
@@ -711,6 +770,72 @@ export interface operations {
             };
         };
     };
+    request_reset_api_auth_password_reset_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Notice"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_reset_api_auth_password_reset_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetConfirm"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_documents_api_documents_get: {
         parameters: {
             query?: never;
@@ -858,7 +983,9 @@ export interface operations {
     undo_change_api_documents__document_id__undo_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 document_id: string;
             };
@@ -909,7 +1036,9 @@ export interface operations {
     create_block_api_pages__page_id__blocks_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 page_id: string;
             };
@@ -944,7 +1073,9 @@ export interface operations {
     delete_block_api_blocks__block_id__delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 block_id: string;
             };
@@ -973,7 +1104,9 @@ export interface operations {
     update_block_api_blocks__block_id__patch: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 block_id: string;
             };
@@ -1008,7 +1141,9 @@ export interface operations {
     move_block_api_blocks__block_id__move_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 block_id: string;
             };
@@ -1043,7 +1178,9 @@ export interface operations {
     split_block_api_blocks__block_id__split_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 block_id: string;
             };
@@ -1078,7 +1215,9 @@ export interface operations {
     merge_block_api_blocks__block_id__merge_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 block_id: string;
             };
@@ -1109,7 +1248,9 @@ export interface operations {
     add_page_api_documents__document_id__pages_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 document_id: string;
             };
@@ -1144,7 +1285,9 @@ export interface operations {
     delete_page_api_pages__page_id__delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Document-Revision"?: number | null;
+            };
             path: {
                 page_id: string;
             };

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { api, type Block, type BlockPatch, type DocumentData } from "../api/client";
+import { ApiError, api, type Block, type BlockPatch, type DocumentData } from "../api/client";
 import { locate, moveBlock, removeBlock, replaceBlock, type Location } from "./blockOps";
 
 type SetDoc = (update: (doc: DocumentData) => DocumentData) => void;
@@ -24,8 +24,10 @@ export function useBlocks(doc: DocumentData | null, setDoc: SetDoc) {
         setDoc(await save());
         return true;
       } catch (err) {
-        setDoc(() => before);
         setError(err instanceof Error ? err.message : "Something went wrong.");
+        // A stale tab shows the newer version rather than its own rolled-back copy.
+        const fresh = err instanceof ApiError && err.status === 409 ? await api.document(before.id).catch(() => null) : null;
+        setDoc(() => fresh ?? before);
         return false;
       }
     },
