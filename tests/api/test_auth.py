@@ -1,14 +1,12 @@
 from datetime import timedelta
 
-import pytest
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from api.auth.passwords import hash_password, verify_password
-from api.auth.sessions import LoginThrottle
 from api.core.cleanup import purge_expired
 from api.core.db import get_engine
-from api.core.errors import AppError
-from api.core.models import Document, utcnow
+from api.core.models import AuthAttempt, Document, utcnow
 from tests.api.conftest import make_pdf
 
 PASSWORD = "correct horse battery"
@@ -55,16 +53,28 @@ def test_login_logout(client):
     assert client.get("/api/auth/me").status_code == 200
 
 
-def test_throttle_blocks_after_repeated_failures():
-    now = [0.0]
-    throttle = LoginThrottle(clock=lambda: now[0])
+def test_lockout_is_stored_in_the_database(client, settings):
+    register(client)
+    client.post("/api/auth/logout")
+    wrong = {"email": "ada@example.com", "password": "wrong password!"}
     for _ in range(5):
-        throttle.fail("a@example.com")
+        assert client.post("/api/auth/login", json=wrong).status_code == 401
 
-    with pytest.raises(AppError):
-        throttle.check("a@example.com")
-    now[0] += 16 * 60
-    throttle.check("a@example.com")
+    right = {"email": "ada@example.com", "password": PASSWORD}
+    assert client.post("/api/auth/login", json=right).status_code == 429
+    with Session(get_engine()) as session:
+        assert session.scalar(select(func.count()).select_from(AuthAttempt)) == 5
+        session.execute(update(AuthAttempt).values(at=utcnow() - timedelta(minutes=16)))
+        session.commit()
+    assert client.post("/api/auth/login", json=right).status_code == 200
+
+
+def test_old_attempts_are_purged(client, settings):
+    with Session(get_engine()) as session:
+        session.add(AuthAttempt(email="a@example.com", kind="login", at=utcnow() - timedelta(days=2)))
+        session.commit()
+        purge_expired(session, settings)
+        assert session.scalar(select(func.count()).select_from(AuthAttempt)) == 0
 
 
 def test_signed_in_upload_is_owned_and_private(client, settings):

@@ -33,6 +33,26 @@ class AuthSession(Base):
     user: Mapped[User] = relationship()
 
 
+class AuthAttempt(Base):
+    """Failed sign-ins and reset requests, counted per email to slow down guessing."""
+
+    __tablename__ = "auth_attempts"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String(254), index=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    at: Mapped[datetime] = mapped_column(default=utcnow, index=True)
+
+
+class PasswordReset(Base):
+    __tablename__ = "password_resets"
+
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    expires_at: Mapped[datetime] = mapped_column()
+    user: Mapped[User] = relationship()
+
+
 class Document(Base):
     __tablename__ = "documents"
 

@@ -7,6 +7,7 @@ from pypdf import PdfWriter
 
 from api.adobe.output import ExtractOutput
 from api.adobe.provider import get_adobe
+from api.auth.mailer import get_mailer
 from api.core.config import get_settings
 from api.core.db import reset_engine
 
@@ -27,6 +28,14 @@ class FakeAdobe:
     def html_to_pdf(self, session, html, pages):
         self.export_html.append(html)
         return b"%PDF-1.7 fake", 1
+
+
+class FakeMailer:
+    def __init__(self):
+        self.sent: list[tuple[str, str, str]] = []
+
+    def send(self, to, subject, body):
+        self.sent.append((to, subject, body))
 
 
 def make_pdf(pages: int = 2, salt: str = "") -> bytes:
@@ -59,11 +68,17 @@ def adobe():
 
 
 @pytest.fixture
-def client(settings, adobe):
+def mailer():
+    return FakeMailer()
+
+
+@pytest.fixture
+def client(settings, adobe, mailer):
     from api.main import create_app
 
     app = create_app()
     app.dependency_overrides[get_adobe] = lambda: adobe
+    app.dependency_overrides[get_mailer] = lambda: mailer
     with TestClient(app) as test_client:
         yield test_client
 

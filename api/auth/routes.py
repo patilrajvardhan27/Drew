@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, Request, Response, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from api.auth import throttle
 from api.auth.passwords import hash_password, verify_password
-from api.auth.sessions import end_session, required_user, start_session, throttle
+from api.auth.sessions import end_session, required_user, start_session
 from api.core.config import Settings, get_settings
 from api.core.db import get_session
 from api.core.errors import AppError
@@ -42,12 +43,12 @@ def login(
     settings: Settings = Depends(get_settings),
 ) -> UserOut:
     email = _normalise(body.email)
-    throttle.check(email)
+    throttle.check(session, email, "login")
     user = session.scalar(select(User).where(User.email == email))
     if user is None or not verify_password(body.password, user.password_hash):
-        throttle.fail(email)
+        throttle.note(session, email, "login")
         raise AppError(401, "Email or password is incorrect.")
-    throttle.clear(email)
+    throttle.clear(session, email, "login")
     start_session(session, settings, user, response)
     return UserOut.model_validate(user)
 
