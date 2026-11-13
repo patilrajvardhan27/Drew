@@ -15,15 +15,20 @@ log = logging.getLogger(__name__)
 
 
 def purge_expired(session: Session, settings: Settings, now: datetime | None = None) -> int:
-    """Delete documents and cached Extract results older than the retention window."""
+    """Delete anonymous documents and cached Extract results older than the retention window."""
     cutoff = (now or utcnow()) - timedelta(hours=settings.retention_hours)
-    expired = session.scalars(select(Document).where(Document.created_at < cutoff)).all()
+    anonymous = select(Document).where(Document.owner_id.is_(None), Document.created_at < cutoff)
+    expired = session.scalars(anonymous).all()
     for doc in expired:
         session.delete(doc)
     session.commit()
 
+    # Cached results behind a document someone kept are still needed for its original page images.
+    kept = set(session.scalars(select(Document.sha256).where(Document.owner_id.is_not(None))))
     if settings.cache_dir.exists():
         for entry in settings.cache_dir.iterdir():
+            if entry.name in kept:
+                continue
             modified = datetime.fromtimestamp(entry.stat().st_mtime, UTC).replace(tzinfo=None)
             if modified < cutoff:
                 shutil.rmtree(entry, ignore_errors=True)

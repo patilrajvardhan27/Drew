@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from pathlib import Path
 
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import Engine, create_engine, inspect, text
 from sqlalchemy.orm import DeclarativeBase, Session
 
 from api.core.config import get_settings
@@ -38,7 +38,30 @@ def reset_engine() -> None:
 def init_db() -> None:
     from api.core import models  # noqa: F401  registers the tables
 
-    Base.metadata.create_all(get_engine())
+    engine = get_engine()
+    Base.metadata.create_all(engine)
+    add_missing_columns(engine)
+
+
+def add_missing_columns(engine: Engine) -> None:
+    """create_all skips existing tables, so new nullable or defaulted columns are added here."""
+    existing = inspect(engine)
+    with engine.begin() as connection:
+        for table in Base.metadata.sorted_tables:
+            if not existing.has_table(table.name):
+                continue
+            present = {column["name"] for column in existing.get_columns(table.name)}
+            for column in table.columns:
+                if column.name in present:
+                    continue
+                kind = column.type.compile(engine.dialect)
+                default = (
+                    column.default.arg if column.default is not None and column.default.is_scalar else None
+                )
+                clause = f" DEFAULT {default!r}" if default is not None else ""
+                connection.execute(
+                    text(f'ALTER TABLE {table.name} ADD COLUMN "{column.name}" {kind}{clause}')
+                )
 
 
 def get_session() -> Iterator[Session]:
