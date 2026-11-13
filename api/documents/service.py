@@ -11,7 +11,8 @@ from api.adobe.provider import Adobe
 from api.blocks.mapping import map_extract
 from api.core.config import Settings
 from api.core.errors import AppError
-from api.core.models import Block, Document, Page
+from api.core.models import Block, Document, Page, User
+from api.documents.images import render_pages
 from api.tables.validate import validate_csv
 
 PDF_MAGIC = b"%PDF-"
@@ -31,7 +32,9 @@ def count_pages(raw: bytes, settings: Settings) -> int:
     return pages
 
 
-def ingest(session: Session, adobe: Adobe, settings: Settings, name: str, raw: bytes) -> Document:
+def ingest(
+    session: Session, adobe: Adobe, settings: Settings, name: str, raw: bytes, owner: User | None = None
+) -> Document:
     pages = count_pages(raw, settings)
     sha = hashlib.sha256(raw).hexdigest()
     cache = settings.cache_dir / sha
@@ -43,8 +46,10 @@ def ingest(session: Session, adobe: Adobe, settings: Settings, name: str, raw: b
     else:
         output, cost = adobe.extract(session, raw, pages)
         output.to_dir(cache)
+    render_pages(raw, cache / "pages")
 
     doc = build_document(Path(name).name or "document.pdf", sha, output, cost)
+    doc.owner_id = owner.id if owner else None
     session.add(doc)
     session.commit()
     return doc
@@ -53,7 +58,7 @@ def ingest(session: Session, adobe: Adobe, settings: Settings, name: str, raw: b
 def build_document(name: str, sha: str, output: ExtractOutput, cost: int) -> Document:
     doc = Document(name=name[:255], sha256=sha, transactions_used=cost)
     for page_index, mapped in enumerate(map_extract(output)):
-        page = Page(kind="extracted", position=page_index)
+        page = Page(kind="extracted", position=page_index, source_index=page_index)
         page.blocks = [
             Block(
                 type=block.type,
