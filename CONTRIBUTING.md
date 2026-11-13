@@ -10,6 +10,8 @@
 - **Budget.** Extract is refused at 450 transactions a month. Extract results are cached by file hash.
 - **Design.** Follow `docs/design.md`. Skeleton loaders on every async view, no icon libraries, no hover animations.
 - **Legal templates** always carry "Template text. Not legal advice."
+- **Access.** Load documents, pages and blocks through `api/auth/access.py` so ownership is checked in one place.
+- **Undo.** Any route that changes a document calls `history.record` first.
 
 ## Refreshing the Extract fixture
 
