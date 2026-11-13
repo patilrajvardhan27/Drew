@@ -5,10 +5,6 @@ export interface Location {
   index: number;
 }
 
-export interface Trashed extends Location {
-  block: Block;
-}
-
 function withPositions(blocks: Block[], pageId: string): Block[] {
   return blocks.map((block, position) => ({ ...block, page_id: pageId, position }));
 }
@@ -39,14 +35,6 @@ export function moveBlock(doc: DocumentData, blockId: string, target: Location):
 
 export function removeBlock(doc: DocumentData, blockId: string): DocumentData {
   return mapPages(doc, (page) => page.blocks.filter((b) => b.id !== blockId));
-}
-
-export function insertBlock(doc: DocumentData, block: Block, target: Location): DocumentData {
-  return mapPages(doc, (page) =>
-    page.id === target.pageId
-      ? [...page.blocks.slice(0, target.index), block, ...page.blocks.slice(target.index)]
-      : page.blocks,
-  );
 }
 
 export function replaceBlock(doc: DocumentData, block: Block): DocumentData {

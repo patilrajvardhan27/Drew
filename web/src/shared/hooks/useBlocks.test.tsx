@@ -15,9 +15,11 @@ const doc: DocumentData = {
   sha256: "x",
   created_at: "2026-01-01T00:00:00",
   transactions_used: 1,
+  owned: false,
+  can_undo: false,
   pages: [
-    { id: "p1", kind: "extracted", position: 0, blocks: [block("a", "p1", 0), block("b", "p1", 1), block("c", "p1", 2)] },
-    { id: "p2", kind: "extracted", position: 1, blocks: [block("d", "p2", 0)] },
+    { id: "p1", kind: "extracted", position: 0, source_index: 0, blocks: [block("a", "p1", 0), block("b", "p1", 1), block("c", "p1", 2)] },
+    { id: "p2", kind: "extracted", position: 1, source_index: 1, blocks: [block("d", "p2", 0)] },
   ],
 };
 
@@ -63,19 +65,30 @@ describe("useBlocks", () => {
     expect(result.current.blocks.error).toBe("Network down");
   });
 
-  it("deletes then undoes back into the old position", async () => {
+  it("marks a delete as undoable, then undoes through the server", async () => {
     vi.spyOn(api, "deleteBlock").mockResolvedValue(undefined);
-    vi.spyOn(api, "createBlock").mockResolvedValue(block("b2", "p1", 1));
+    vi.spyOn(api, "undo").mockResolvedValue(doc);
     const { result } = setup();
 
     await act(() => result.current.blocks.remove("b"));
     expect(ids(result.current.state, 0)).toEqual(["a", "c"]);
-    expect(result.current.blocks.canUndo).toBe(true);
+    expect(result.current.state.can_undo).toBe(true);
 
     await act(() => result.current.blocks.undo());
-    expect(ids(result.current.state, 0)).toEqual(["a", "b2", "c"]);
-    expect(api.createBlock).toHaveBeenCalledWith("p1", expect.objectContaining({ text: "b", position: 1 }));
-    expect(result.current.blocks.canUndo).toBe(false);
+    expect(api.undo).toHaveBeenCalledWith("d");
+    expect(ids(result.current.state, 0)).toEqual(["a", "b", "c"]);
+    expect(result.current.state.can_undo).toBe(false);
+  });
+
+  it("splits with the unsaved draft and takes the server's document", async () => {
+    const after = { ...doc, can_undo: true, pages: [{ ...doc.pages[0], blocks: [block("a", "p1", 0), block("a2", "p1", 1)] }] };
+    vi.spyOn(api, "splitBlock").mockResolvedValue(after);
+    const { result } = setup();
+
+    await act(() => result.current.blocks.split("a", 3, "abc def"));
+
+    expect(api.splitBlock).toHaveBeenCalledWith("a", 3, "abc def");
+    expect(ids(result.current.state, 0)).toEqual(["a", "a2"]);
   });
 
   it("keeps server flags after an edit", async () => {

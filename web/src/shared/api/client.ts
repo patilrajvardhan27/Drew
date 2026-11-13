@@ -9,6 +9,9 @@ export type BlockCreate = Schemas["BlockCreate"];
 export type BlockPatch = Schemas["BlockPatch"];
 export type PageCreate = Schemas["PageCreate"];
 export type LegalDetails = Schemas["LegalDetails"];
+export type UserData = Schemas["UserOut"];
+export type DocumentSummary = Schemas["DocumentSummary"];
+export type ExpressLink = Schemas["ExpressLink"];
 
 export class ApiError extends Error {
   constructor(
@@ -54,8 +57,20 @@ export const api = {
   moveBlock: (id: string, pageId: string, position: number) =>
     json<DocumentData>(`/blocks/${id}/move`, "POST", { page_id: pageId, position }),
   deleteBlock: (id: string) => request(`/blocks/${id}`, { method: "DELETE" }).then(() => undefined),
+  splitBlock: (id: string, offset: number, text: string) =>
+    json<DocumentData>(`/blocks/${id}/split`, "POST", { offset, text }),
+  mergeBlock: (id: string) => json<DocumentData>(`/blocks/${id}/merge`, "POST"),
+  undo: (documentId: string) => json<DocumentData>(`/documents/${documentId}/undo`, "POST"),
+  claim: (documentId: string) => json<DocumentData>(`/documents/${documentId}/claim`, "POST"),
+  listDocuments: () => json<DocumentSummary[]>("/documents"),
+  originalUrl: (pageId: string) => `/api/pages/${pageId}/original`,
+  expressLink: (documentId: string) => json<ExpressLink>(`/documents/${documentId}/express-link`, "POST"),
   addPage: (documentId: string, body: PageCreate) => json<DocumentData>(`/documents/${documentId}/pages`, "POST", body),
   deletePage: (id: string) => json<DocumentData>(`/pages/${id}`, "DELETE"),
   previewUrl: (documentId: string) => `/api/documents/${documentId}/preview`,
+  me: () => json<UserData>("/auth/me"),
+  register: (email: string, password: string) => json<UserData>("/auth/register", "POST", { email, password }),
+  login: (email: string, password: string) => json<UserData>("/auth/login", "POST", { email, password }),
+  logout: () => request("/auth/logout", { method: "POST" }).then(() => undefined),
   exportPdf: (documentId: string) => request(`/documents/${documentId}/export`, { method: "POST" }).then((r) => r.blob()),
 };

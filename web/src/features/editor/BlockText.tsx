@@ -3,8 +3,14 @@ import type { Block, BlockPatch } from "../../shared/api/client";
 
 const SAVE_DELAY_MS = 800;
 
+interface Props {
+  block: Block;
+  onSave: (patch: BlockPatch) => void;
+  onSplit: (offset: number, text: string) => void;
+}
+
 /** Shows a block's text; click to edit. Paragraphs save while typing, headings on Enter. */
-export function BlockText({ block, onSave }: { block: Block; onSave: (patch: BlockPatch) => void }) {
+export function BlockText({ block, onSave, onSplit }: Props) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(block.text);
   const timer = useRef<number>();
@@ -35,8 +41,19 @@ export function BlockText({ block, onSave }: { block: Block; onSave: (patch: Blo
     setEditing(false);
   };
 
+  const split = () => {
+    const offset = field.current?.selectionStart ?? 0;
+    if (offset <= 0 || offset >= draft.length) return;
+    window.clearTimeout(timer.current);
+    onSplit(offset, draft);
+    setEditing(false);
+  };
+
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Escape") {
+    if (event.key === "Enter" && event.altKey) {
+      event.preventDefault();
+      split();
+    } else if (event.key === "Escape") {
       window.clearTimeout(timer.current);
       setDraft(block.text);
       setEditing(false);
@@ -48,16 +65,23 @@ export function BlockText({ block, onSave }: { block: Block; onSave: (patch: Blo
 
   if (editing) {
     return (
-      <textarea
-        ref={field}
-        className={`input block-input block-${block.type}`}
-        aria-label={`Edit ${block.type}`}
-        value={draft}
-        rows={Math.max(2, draft.split("\n").length)}
-        onChange={(e) => change(e.target.value)}
-        onBlur={finish}
-        onKeyDown={onKeyDown}
-      />
+      <div className="block-editing">
+        <textarea
+          ref={field}
+          className={`input block-input block-${block.type}`}
+          aria-label={`Edit ${block.type}`}
+          value={draft}
+          rows={Math.max(2, draft.split("\n").length)}
+          onChange={(e) => change(e.target.value)}
+          onBlur={finish}
+          onKeyDown={onKeyDown}
+        />
+        {/* mousedown is cancelled so the textarea keeps focus and its cursor position */}
+        <button type="button" className="split-button" onMouseDown={(e) => e.preventDefault()} onClick={split}>
+          Split at cursor
+        </button>
+        <span className="muted split-hint">Alt+Enter splits, Escape cancels</span>
+      </div>
     );
   }
 

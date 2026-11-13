@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Block, BlockPatch } from "../../shared/api/client";
 import { downloadFile, parseCsv, toCsv } from "../../shared/csv";
 import { Button } from "../../shared/ui";
+import "./table.css";
 
 export function TableGrid({ block, onSave }: { block: Block; onSave: (patch: BlockPatch) => void }) {
   const [rows, setRows] = useState(() => parseCsv(block.table_csv ?? ""));

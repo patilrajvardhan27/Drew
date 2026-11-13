@@ -12,13 +12,14 @@ const LABELS: Record<Block["type"], string> = {
   table: "Table",
 };
 
-interface Props {
-  block: Block;
+export interface BlockActions {
   onSave: (id: string, patch: BlockPatch) => void;
   onDelete: (id: string) => void;
+  onSplit: (id: string, offset: number, text: string) => void;
+  onMerge: (id: string) => void;
 }
 
-export function BlockCard({ block, onSave, onDelete }: Props) {
+export function BlockCard({ block, canMerge, actions }: { block: Block; canMerge: boolean; actions: BlockActions }) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id: block.id,
   });
@@ -43,17 +44,28 @@ export function BlockCard({ block, onSave, onDelete }: Props) {
           Drag
         </button>
         <Tag>{label}</Tag>
-        <Button variant="quiet" className="block-delete" onClick={() => onDelete(block.id)}>
-          Delete
-        </Button>
+        <span className="block-tools">
+          {canMerge && (
+            <Button variant="quiet" onClick={() => actions.onMerge(block.id)}>
+              Merge up
+            </Button>
+          )}
+          <Button variant="quiet" onClick={() => actions.onDelete(block.id)}>
+            Delete
+          </Button>
+        </span>
       </div>
-      <BlockBody block={block} onSave={(patch) => onSave(block.id, patch)} />
+      {block.type === "table" ? (
+        <TableGrid block={block} onSave={(patch) => actions.onSave(block.id, patch)} />
+      ) : (
+        <BlockText
+          block={block}
+          onSave={(patch) => actions.onSave(block.id, patch)}
+          onSplit={(offset, text) => actions.onSplit(block.id, offset, text)}
+        />
+      )}
     </article>
   );
-}
-
-export function BlockBody({ block, onSave }: { block: Block; onSave: (patch: BlockPatch) => void }) {
-  return block.type === "table" ? <TableGrid block={block} onSave={onSave} /> : <BlockText block={block} onSave={onSave} />;
 }
 
 /** The lifted copy shown under the pointer while dragging. */
