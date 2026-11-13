@@ -10,3 +10,22 @@ web/dist/
 web/test-results/
 web/playwright-report/
 web/tsconfig.tsbuildinfo
+
+# Personal assistant and editor instruction files stay local.
+CLAUDE.md
+CLAUDE.local.md
+**/CLAUDE.md
+.claude/
+AGENTS.md
+**/AGENTS.md
+GEMINI.md
+.gemini/
+.cursorrules
+.cursor/
+.windsurfrules
+.clinerules
+.continue/
+.aider*
+.codex/
+.junie/
+.github/copilot-instructions.md
