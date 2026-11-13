@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from api.auth.access import document_for, page_for
+from api.auth.access import page_for
 from api.auth.sessions import optional_user
 from api.core.config import Settings, get_settings
 from api.core.db import get_session
@@ -11,20 +11,15 @@ from api.core.models import Block, Page, User
 from api.core.ordering import renumber
 from api.core.schemas import DocumentOut, PageCreate
 from api.documents.images import page_image_path
-from api.history.service import record
+from api.history.context import Edit, edit_context
 from api.pages.legal import legal_blocks
 
 router = APIRouter(tags=["pages"])
 
 
 @router.post("/documents/{document_id}/pages", status_code=status.HTTP_201_CREATED)
-def add_page(
-    document_id: str,
-    body: PageCreate,
-    session: Session = Depends(get_session),
-    user: User | None = Depends(optional_user),
-) -> DocumentOut:
-    doc = document_for(session, document_id, user)
+def add_page(document_id: str, body: PageCreate, edit: Edit = Depends(edit_context)) -> DocumentOut:
+    doc = edit.document(document_id)
     page = Page(kind=body.kind)
     if body.kind != "blank":
         if body.details is None:
@@ -33,25 +28,21 @@ def add_page(
             Block(type=b.type, text=b.text, level=b.level, position=i, flags=[])
             for i, b in enumerate(legal_blocks(body.kind, body.details))
         ]
-    record(session, doc)
+    edit.record(doc)
     doc.pages.append(page)
     renumber(doc.pages, page, body.position)
-    session.commit()
+    edit.session.commit()
     return DocumentOut.build(doc)
 
 
 @router.delete("/pages/{page_id}")
-def delete_page(
-    page_id: str,
-    session: Session = Depends(get_session),
-    user: User | None = Depends(optional_user),
-) -> DocumentOut:
-    page = page_for(session, page_id, user)
+def delete_page(page_id: str, edit: Edit = Depends(edit_context)) -> DocumentOut:
+    page = edit.page(page_id)
     doc = page.document
-    record(session, doc)
+    edit.record(doc)
     doc.pages.remove(page)
     renumber(doc.pages)
-    session.commit()
+    edit.session.commit()
     return DocumentOut.build(doc)
 
 

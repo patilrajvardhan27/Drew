@@ -38,6 +38,7 @@ def _latest(session: Session, doc: Document) -> HistoryEntry | None:
 
 def record(session: Session, doc: Document, key: str | None = None) -> None:
     """Save the current state. Repeated edits to the same block within a minute share one entry."""
+    doc.revision += 1
     latest = _latest(session, doc)
     if key and latest and latest.key == key and utcnow() - latest.created_at < COALESCE:
         return
@@ -67,5 +68,6 @@ def undo(session: Session, doc: Document) -> None:
         page.blocks = [Block(**{f: block[f] for f in BLOCK_FIELDS}) for block in saved["blocks"]]
         doc.pages.append(page)
     session.delete(entry)
+    doc.revision += 1
     doc.undo_depth = max(doc.undo_depth - 1, 0)
     session.commit()

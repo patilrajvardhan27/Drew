@@ -11,7 +11,7 @@ from api.core.db import get_session
 from api.core.models import Document, User
 from api.core.schemas import DocumentOut, DocumentSummary, UsageOut
 from api.documents.service import ingest
-from api.history.service import undo
+from api.history.context import Edit, edit_context
 
 router = APIRouter(tags=["documents"])
 
@@ -70,13 +70,9 @@ def claim_document(
 
 
 @router.post("/documents/{document_id}/undo")
-def undo_change(
-    document_id: str,
-    session: Session = Depends(get_session),
-    user: User | None = Depends(optional_user),
-) -> DocumentOut:
-    doc = document_for(session, document_id, user)
-    undo(session, doc)
+def undo_change(document_id: str, edit: Edit = Depends(edit_context)) -> DocumentOut:
+    doc = edit.document(document_id)
+    edit.undo(doc)
     return DocumentOut.build(doc)
 
 

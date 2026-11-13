@@ -64,6 +64,8 @@ class Document(Base):
     # Owned documents survive the 24 hour purge; anonymous ones do not.
     owner_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), default=None, index=True)
     undo_depth: Mapped[int] = mapped_column(default=0)
+    # Bumped on every change so a stale tab cannot overwrite newer work.
+    revision: Mapped[int] = mapped_column(default=0)
     pages: Mapped[list["Page"]] = relationship(back_populates="document", cascade="all, delete-orphan")
     history: Mapped[list["HistoryEntry"]] = relationship(cascade="all, delete-orphan", lazy="noload")
 

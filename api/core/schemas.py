@@ -40,6 +40,7 @@ class DocumentOut(BaseModel):
     transactions_used: int
     owned: bool
     can_undo: bool
+    revision: int
     pages: list[PageOut]
 
     @classmethod
@@ -62,6 +63,7 @@ class DocumentOut(BaseModel):
             transactions_used=doc.transactions_used,
             owned=doc.owner_id is not None,
             can_undo=doc.undo_depth > 0,
+            revision=doc.revision,
             pages=pages,
         )
 
