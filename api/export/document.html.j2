@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ title }}</title>
+<style>{{ css | safe }}</style>
+</head>
+<body>
+{% for blocks in pages %}
+<section class="sheet">
+  {% for block in blocks %}
+    {% if block.type == "heading" %}
+      <h{{ block.level }}>{{ block.text }}</h{{ block.level }}>
+    {% elif block.type == "list" %}
+      <ul>{% for item in block["items"] %}<li>{{ item }}</li>{% endfor %}</ul>
+    {% elif block.type == "table" %}
+      <table>
+        <thead><tr>{% for cell in block.header %}<th>{{ cell }}</th>{% endfor %}</tr></thead>
+        <tbody>
+        {% for row in block.rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>{{ block.text }}</p>
+    {% endif %}
+  {% endfor %}
+</section>
+{% endfor %}
+</body>
+</html>
