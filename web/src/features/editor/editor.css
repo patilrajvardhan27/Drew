@@ -81,8 +81,80 @@
   margin-bottom: 6px;
 }
 
-.block-delete {
+.block-tools {
+  display: flex;
+  gap: 2px;
   margin-left: auto;
+}
+
+.keep-note {
+  margin: 4px 0 0;
+}
+
+.inline-action {
+  min-height: 0;
+  padding: 0;
+  color: var(--color-ink-violet);
+  text-decoration: underline;
+  font-size: 15px;
+}
+
+.editor-layout.is-wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.page-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.original {
+  position: sticky;
+  top: 16px;
+  margin: 0;
+}
+
+.original img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #d6d6d6;
+  border-radius: var(--radius-button);
+}
+
+.original figcaption {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.original-missing {
+  margin: 0;
+}
+
+.block-editing {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.block-editing .block-input {
+  grid-column: 1 / -1;
+}
+
+.split-button {
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  color: var(--color-ink-violet);
+  font: 500 13px/1 var(--font-ui);
+  cursor: pointer;
+}
+
+.split-hint {
+  font-size: 12px;
 }
 
 .drag-handle {
@@ -130,45 +202,14 @@
   overflow: hidden;
 }
 
-.table-flags {
-  margin: 0 0 8px;
-  padding: 8px 12px 8px 28px;
-  border-radius: var(--radius-button);
-  background: var(--color-newsprint);
-  color: var(--color-alert);
-  font-size: 14px;
-}
-
-.table-scroll {
-  overflow-x: auto;
-}
-
-.table-grid {
-  border-collapse: collapse;
-  min-width: 100%;
-}
-
-.table-grid td {
-  border: 1px solid #d6d6d6;
-  padding: 0;
-}
-
-.cell {
-  width: 100%;
-  min-width: 90px;
-  border: 0;
-  padding: 6px 8px;
-  font: 400 14px/1.4 var(--font-ui);
-  background: transparent;
-}
-
-.cell-head {
-  font-weight: 600;
-}
-
 @media (max-width: 900px) {
-  .editor-layout {
+  .editor-layout,
+  .page-split {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .original {
+    position: static;
   }
 
   .editor-title {

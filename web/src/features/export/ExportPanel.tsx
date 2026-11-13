@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, type DocumentData, type Usage } from "../../shared/api/client";
 import { downloadFile } from "../../shared/csv";
 import { Button, Skeleton } from "../../shared/ui";
+import { ExpressCard } from "./ExpressCard";
 import "./export.css";
 
 const PREVIEW_DELAY_MS = 700;
@@ -64,6 +65,7 @@ export function ExportPanel({ doc, usage, onExported }: { doc: DocumentData; usa
         </p>
       )}
       <UsageNote usage={usage} />
+      <ExpressCard documentId={doc.id} />
     </aside>
   );
 }

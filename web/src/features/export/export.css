@@ -23,6 +23,23 @@
   border: 0;
 }
 
+.express-card {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: var(--hairline);
+}
+
+.express-title {
+  font-size: 24px;
+}
+
+.express-actions {
+  display: flex;
+  gap: 8px;
+}
+
 @media (max-width: 900px) {
   .export-panel {
     position: static;
