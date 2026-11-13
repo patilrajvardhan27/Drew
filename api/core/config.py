@@ -44,8 +44,8 @@ class Settings(BaseSettings):
 
     # Where reset emails link to; defaults to the address the request came in on.
     public_url: str = ""
-    # "log" writes emails to the server log for local work; use "smtp" anywhere real.
-    mail_backend: Literal["log", "smtp"] = "log"
+    # "log" and "file" (storage/mail) are for local work; use "smtp" anywhere real.
+    mail_backend: Literal["log", "file", "smtp"] = "log"
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_user: str = ""

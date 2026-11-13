@@ -25,6 +25,7 @@ export default defineConfig({
       REDRAFT_ADOBE_MODE: "fixture",
       REDRAFT_DATABASE_URL: "sqlite:///./data/e2e.db",
       REDRAFT_STORAGE_DIR: "./data/e2e-files",
+      REDRAFT_MAIL_BACKEND: "file",
     },
   },
 });

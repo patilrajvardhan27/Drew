@@ -99,3 +99,12 @@ def test_public_url_is_used_for_links(client, mailer, settings):
     ask(client)
 
     assert "https://redraft.example.com/reset?token=" in mailer.sent[0][2]
+
+
+def test_file_mailer_writes_readable_messages(tmp_path):
+    from api.auth.mailer import FileMailer
+
+    FileMailer(tmp_path / "mail").send(EMAIL, "Hello", "Body text")
+
+    (message,) = (tmp_path / "mail").iterdir()
+    assert message.read_text() == f"To: {EMAIL}\nSubject: Hello\n\nBody text\n"

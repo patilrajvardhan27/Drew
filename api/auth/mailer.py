@@ -1,6 +1,8 @@
 import logging
 import smtplib
+import time
 from email.message import EmailMessage
+from pathlib import Path
 from typing import Protocol
 
 from api.core.config import Settings, get_settings
@@ -17,6 +19,18 @@ class LogMailer:
 
     def send(self, to: str, subject: str, body: str) -> None:
         log.warning("Email to %s: %s\n%s", to, subject, body)
+
+
+class FileMailer:
+    """For local work and tests: each message is written to storage/mail as a text file."""
+
+    def __init__(self, folder: Path):
+        self.folder = folder
+
+    def send(self, to: str, subject: str, body: str) -> None:
+        self.folder.mkdir(parents=True, exist_ok=True)
+        name = f"{time.time_ns()}.txt"
+        (self.folder / name).write_text(f"To: {to}\nSubject: {subject}\n\n{body}\n", "utf-8")
 
 
 class SmtpMailer:
@@ -42,4 +56,8 @@ class SmtpMailer:
 
 def get_mailer() -> Mailer:
     settings = get_settings()
-    return SmtpMailer(settings) if settings.mail_backend == "smtp" else LogMailer()
+    if settings.mail_backend == "smtp":
+        return SmtpMailer(settings)
+    if settings.mail_backend == "file":
+        return FileMailer(settings.storage_dir / "mail")
+    return LogMailer()
